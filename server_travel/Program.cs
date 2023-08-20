@@ -35,6 +35,9 @@ builder.Services.AddDbContext<TravelApiContext>(
     );
 
 builder.Services.AddTransient<IManageTouristSpot, ManageTourestSpotService>();
+builder.Services.AddTransient<IManageHotel, ManageHotelService>();
+builder.Services.AddTransient<IManageResort, ManageResortService>();
+builder.Services.AddTransient<IManageRestaurant, ManageRestaurantService>();
 builder.Services.AddScoped<IUpLoadService, UploadService>();
 builder.Services.AddHttpContextAccessor();
 

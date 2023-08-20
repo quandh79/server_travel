@@ -1,10 +1,9 @@
-﻿using server_travel.Entities;
-using server_travel.Enums;
+﻿using server_travel.Enums;
 using System.ComponentModel;
 
-namespace server_travel.Models
+namespace server_travel.Dtos.Resort
 {
-    public class HotelViewModel
+    public class ResortUpdateRequest
     {
         public int Id { get; set; }
 
@@ -14,7 +13,7 @@ namespace server_travel.Models
 
         public string? Location { get; set; }
 
-        public int? Rating { get; set; }
+        public string? Cacilities { get; set; }
 
         public string? Address { get; set; }
 
@@ -22,7 +21,11 @@ namespace server_travel.Models
         public decimal? Price { get; set; }
         public string? Description { get; set; }
 
-        public virtual ICollection<Image> Images { get; set; } = new List<Image>();
+        public IEnumerable<int> images { get; set; }
+        public IEnumerable<IFormFile> files { get; set; }
+
+        //public virtual Touristspot? Spot { get; set; }
+        [DefaultValue(Status.Active)]
         public Status Status { get; set; }
     }
 }

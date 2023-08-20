@@ -14,6 +14,8 @@ public partial class Tour
     public DateTime? TravelDate { get; set; }
 
     public int? Duration { get; set; }
+    public decimal? Price { get; set; }
+    public virtual ICollection<Image> Images { get; set; } = new List<Image>();
 
     public string? Description { get; set; }
 

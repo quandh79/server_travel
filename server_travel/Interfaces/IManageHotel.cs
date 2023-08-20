@@ -5,10 +5,10 @@ namespace server_travel.Interfaces
 {
     public interface IManageHotel
     {
-        public Task<int> Create(HotelCreateRequest spot);
-        public Task<int> Update(HotelUpdateRequest spot);
+        public Task<int> Create(HotelCreateRequest request);
+        public Task<int> Update(HotelUpdateRequest request);
         public Task<int> Delete(int id);
-        public Task<TourestSpotViewModel> Get_By_Id(int id);
-        public Task<List<TourestSpotViewModel>> GetAll();
+        public Task<HotelViewModel> Get_By_Id(int id);
+        public Task<List<HotelViewModel>> GetAll();
     }
 }
