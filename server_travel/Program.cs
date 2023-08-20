@@ -38,6 +38,8 @@ builder.Services.AddTransient<IManageTouristSpot, ManageTourestSpotService>();
 builder.Services.AddTransient<IManageHotel, ManageHotelService>();
 builder.Services.AddTransient<IManageResort, ManageResortService>();
 builder.Services.AddTransient<IManageRestaurant, ManageRestaurantService>();
+builder.Services.AddTransient<IManageTour, ManageTourService>();
+builder.Services.AddTransient<IManageVehicle, ManageVehicle>();
 builder.Services.AddScoped<IUpLoadService, UploadService>();
 builder.Services.AddHttpContextAccessor();
 
