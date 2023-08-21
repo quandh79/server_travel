@@ -1,7 +1,10 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using server_travel.Entities;
 using server_travel.Interfaces;
 using server_travel.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,9 +33,20 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<TravelApiContext>(
-        option => option.UseSqlServer(builder.Configuration.GetConnectionString("travel_api"))
+        option => option.UseSqlServer(builder.Configuration.GetConnectionString("travel_api")));
 
-    );
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
 
 builder.Services.AddTransient<IManageTouristSpot, ManageTourestSpotService>();
 builder.Services.AddTransient<IManageHotel, ManageHotelService>();
@@ -53,22 +67,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
-//app.UseStaticFiles(new StaticFileOptions()
-//{
-//    FileProvider = new PhysicalFileProvider(
-//Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images")),
-//    RequestPath = "/MyImages"
-//});
-//app.UseDirectoryBrowser(new DirectoryBrowserOptions
-//{
-//    FileProvider = new PhysicalFileProvider(
-//Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images")),
-//    RequestPath = "/MyImages"
-//});
-
 app.MapControllers();
 
 app.Run();

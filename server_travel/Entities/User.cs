@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using server_travel.Enums;
 
 namespace server_travel.Entities;
@@ -12,7 +13,7 @@ public partial class User
     public string? Name { get; set; }
 
     public string? Email { get; set; }
-
+    [StringLength(200)]
     public string? Password { get; set; }
 
     public DateTime? Birthday { get; set; }
