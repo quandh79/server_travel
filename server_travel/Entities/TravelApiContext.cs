@@ -33,6 +33,8 @@ public partial class TravelApiContext : DbContext
     public virtual DbSet<District> Districts { get; set; }
 
     public virtual DbSet<Room> Rooms { get; set; }
+    public virtual DbSet<Feedback> Feedbacks { get; set; }
+
 
 
     // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

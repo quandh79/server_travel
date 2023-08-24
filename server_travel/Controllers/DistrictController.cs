@@ -18,8 +18,8 @@ namespace server_travel.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var districts =  _context.Districts.Include(i=>i.Images)
-                                              .Include(i=>i.Touristspots).ToArray();
+            var districts =  _context.Districts.Include(i=>i.Images).Where(i=>i.Status==Enums.Status.Active)
+                                              .Include(t=>t.Touristspots).Where(t => t.Status == Enums.Status.Active).ToArray();
             if(districts == null)
             {
                 return NotFound();

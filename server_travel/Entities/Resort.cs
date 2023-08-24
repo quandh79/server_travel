@@ -24,6 +24,8 @@ public partial class Resort
     public virtual ICollection<Image> Images { get; set; } = new List<Image>();
     public virtual ICollection<Room> Room { get; set; } = new List<Room>();
     public virtual Touristspot? Spot { get; set; }
+    public int? DistrictId { get; set; }
+    public virtual District? District { get; set; }
     [DefaultValue(Status.Active)]
     public Status Status { get; set; }
 }

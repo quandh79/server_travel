@@ -24,7 +24,8 @@ public partial class Restaurant
 
     public string? Description { get; set; }
 
-
+    public int? DistrictId { get; set; }
+    public virtual District? District { get; set; }
     public virtual ICollection<Image> Images { get; set; } = new List<Image>();
 
     public virtual Touristspot? Spot { get; set; }
