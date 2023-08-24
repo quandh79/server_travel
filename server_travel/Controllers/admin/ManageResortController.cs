@@ -5,7 +5,7 @@ using server_travel.Dtos.Resort;
 using server_travel.Interfaces;
 using server_travel.Models;
 
-namespace server_travel.Controllers
+namespace server_travel.Controllers.admin
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -14,7 +14,7 @@ namespace server_travel.Controllers
         private readonly IManageResort _manageResort;
         public ManageResortController(IManageResort manageResort)
         {
-            _manageResort= manageResort;
+            _manageResort = manageResort;
         }
         [HttpGet]
         public async Task<List<ResortViewModel>> GetAll()

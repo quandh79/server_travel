@@ -22,9 +22,8 @@ public partial class Hotel
     public string? ContactNumber { get; set; }
     public decimal? Price { get; set; }
     public string? Description { get; set; }
-
-
     public virtual ICollection<Image> Images { get; set; } = new List<Image>();
+    public virtual ICollection<Room> Room { get; set; } = new List<Room>();
 
     public virtual Touristspot? Spot { get; set; }
     [DefaultValue(Status.Active)]

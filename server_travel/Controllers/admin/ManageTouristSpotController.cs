@@ -6,15 +6,16 @@ using server_travel.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace server_travel.Controllers
+namespace server_travel.Controllers.admin
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ManageTouristSpotController : ControllerBase
     {
         private readonly IManageTouristSpot _manageTourist;
-        public ManageTouristSpotController(IManageTouristSpot manageTourist) { 
-            _manageTourist= manageTourist;
+        public ManageTouristSpotController(IManageTouristSpot manageTourist)
+        {
+            _manageTourist = manageTourist;
         }
         // GET: api/<ManageTouristSpotController>
         [HttpGet]
@@ -28,16 +29,16 @@ namespace server_travel.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSpotById(int id)
         {
-           var spot = await _manageTourist.Get_By_Id(id);
+            var spot = await _manageTourist.Get_By_Id(id);
             return Ok(spot);
         }
 
         // POST api/<ManageTouristSpotController>
         [HttpPost]
-        public async Task<IActionResult> create([FromForm]SpotCreateRequest request)
+        public async Task<IActionResult> create([FromForm] SpotCreateRequest request)
         {
             var spotId = await _manageTourist.Create(request);
-            if(spotId == 0)
+            if (spotId == 0)
             {
                 return BadRequest();
             }
@@ -50,7 +51,7 @@ namespace server_travel.Controllers
         public async Task<IActionResult> Update([FromForm] SpotUpdateRequest request)
         {
             var touristSpotId = await _manageTourist.Update(request);
-            if(touristSpotId == 0)
+            if (touristSpotId == 0)
             {
                 return BadRequest();
             }
@@ -65,8 +66,8 @@ namespace server_travel.Controllers
             var result = await _manageTourist.Delete(id);
             if (result > 0)
             {
-                return Ok(new {message = "xoa thanh cong"});
-                
+                return Ok(new { message = "xoa thanh cong" });
+
             }
             return BadRequest();
         }

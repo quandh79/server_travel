@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using server_travel.Entities;
 
@@ -11,9 +12,11 @@ using server_travel.Entities;
 namespace travel_api.Migrations
 {
     [DbContext(typeof(TravelApiContext))]
-    partial class TravelApiContextModelSnapshot : ModelSnapshot
+    [Migration("20230823173404_DB_district_roo")]
+    partial class DB_district_roo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

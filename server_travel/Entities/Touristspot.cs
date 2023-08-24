@@ -8,6 +8,7 @@ namespace server_travel.Entities;
 public partial class Touristspot
 {
     public int Id { get; set; }
+    public int? DistrictId { get; set; }
 
     public string Name { get; set; } = null!;
 
@@ -28,4 +29,6 @@ public partial class Touristspot
     public virtual ICollection<Tour> Tours { get; set; } = new List<Tour>();
 
     public virtual ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
+    public virtual District? District { get; set; }
+
 }

@@ -9,7 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace server_travel.Controllers
+namespace server_travel.Controllers.admin
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -26,7 +26,7 @@ namespace server_travel.Controllers
         [Route("register")]
         public IActionResult Register(UserRegisterRequest request)
         {
-           var hashed = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            var hashed = BCrypt.Net.BCrypt.HashPassword(request.Password);
             var user = new User()
             {
                 Name = request.Name,
@@ -35,11 +35,11 @@ namespace server_travel.Controllers
                 RoleTitle = "user"
             };
             _context.Users.Add(user);
-             _context.SaveChanges();
-            return  Ok(new UserViewModel { Name = request.Name, Email = request.Email, Token = GenerateJWT(user) });
+            _context.SaveChanges();
+            return Ok(new UserViewModel { Name = request.Name, Email = request.Email, Token = GenerateJWT(user) });
         }
 
-        private String GenerateJWT(User user)
+        private string GenerateJWT(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Key"]));
             var signatureKey = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -64,9 +64,9 @@ namespace server_travel.Controllers
 
         [HttpPost]
         [Route("login")]
-        public  IActionResult Login(UserLoginRequest request)
+        public IActionResult Login(UserLoginRequest request)
         {
-            var user =   _context.Users.Where(u=>u.Email.Equals(request.Email)).FirstOrDefault();
+            var user = _context.Users.Where(u => u.Email.Equals(request.Email)).FirstOrDefault();
             if (user == null)
             {
                 return Unauthorized();

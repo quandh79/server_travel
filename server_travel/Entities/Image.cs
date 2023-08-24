@@ -10,6 +10,8 @@ public partial class Image
     public int Id { get; set; }
 
     public int? SpotId { get; set; }
+    public int? DistrictId { get; set; }
+
 
     public int? HotelId { get; set; }
 
@@ -17,10 +19,16 @@ public partial class Image
 
     public int? RestaurantId { get; set; }
     public int? TourId { get; set; }
+    public int? RoomId { get; set; }
+
 
     public string ImageUrl { get; set; } = null!;
+    public virtual Room? Room { get; set; }
+
 
     public virtual Hotel? Hotel { get; set; }
+    public virtual District? District { get; set; }
+
 
     public virtual Resort? Resort { get; set; }
 

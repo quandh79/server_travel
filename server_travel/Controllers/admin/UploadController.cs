@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using server_travel.Interfaces;
 
-namespace server_travel.Controllers
+namespace server_travel.Controllers.admin
 {
     [Route("api/[controller]")]
     [ApiController]

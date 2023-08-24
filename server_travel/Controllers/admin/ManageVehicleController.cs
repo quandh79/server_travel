@@ -6,7 +6,7 @@ using server_travel.Entities;
 using server_travel.Interfaces;
 using server_travel.Models;
 
-namespace server_travel.Controllers
+namespace server_travel.Controllers.admin
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -15,7 +15,7 @@ namespace server_travel.Controllers
         private readonly IManageVehicle _manageVehicle;
         public ManageVehicleController(IManageVehicle manageVehicle)
         {
-            _manageVehicle= manageVehicle;
+            _manageVehicle = manageVehicle;
         }
 
         [HttpGet]
