@@ -34,6 +34,8 @@ public partial class TravelApiContext : DbContext
 
     public virtual DbSet<Room> Rooms { get; set; }
     public virtual DbSet<Feedback> Feedbacks { get; set; }
+    public virtual DbSet<TravelPlan> TravelPlans { get; set; }
+
 
 
 
@@ -253,13 +255,13 @@ public partial class TravelApiContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(250)
                 .HasColumnName("name");
-            entity.Property(e => e.SpotId).HasColumnName("spotId");
+            entity.Property(e => e.TourId).HasColumnName("tourId");
             entity.Property(e => e.Type)
                 .HasMaxLength(250)
                 .HasColumnName("type");
 
-            entity.HasOne(d => d.Spot).WithMany(p => p.Vehicles)
-                .HasForeignKey(d => d.SpotId)
+            entity.HasOne(d => d.Tour).WithMany(p => p.Vehicles)
+                .HasForeignKey(d => d.TourId)
                 .HasConstraintName("FK__vehicles__spotId__571DF1D5");
         });
 

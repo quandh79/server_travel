@@ -1,0 +1,5 @@
+{
+    "appService.preDeployTask": "publish-release",
+    "appService.deploySubpath": "server_travel\\bin\\Release\\net7.0\\publish",
+    "appService.defaultWebAppToDeploy": "/subscriptions/3075dd40-f5b0-4d2a-afbb-43ca6e98a480/resourceGroups/Truong/providers/Microsoft.Web/sites/servertravel2"
+}

@@ -10,6 +10,8 @@ namespace server_travel.Interfaces
         public Task<int> Update(UpdateVehicleRequest request);
         public Task<int> Delete(int id);
         public Task<VehicleViewModel> Get_By_Id(int id);
+        public Task<List<VehicleViewModel>> GetByTourId(int id);
+
         public Task<List<VehicleViewModel>> GetAll();
     }
 }

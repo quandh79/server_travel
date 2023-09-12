@@ -12,8 +12,8 @@ namespace server_travel.Dtos.touristSpot
         public string Location { get; set; } = null!;
 
         public string? Description { get; set; }
-        public IEnumerable<int> images { get; set; }
-        public IEnumerable<IFormFile> files { get; set; }
+        public IEnumerable<int>? images { get; set; }
+        public IEnumerable<IFormFile>? files { get; set; }
 
     }
 }

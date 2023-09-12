@@ -49,9 +49,9 @@ namespace server_travel.Controllers.admin
 
         // PUT api/<ManageTouristSpotController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromForm] UpdateDistrictRequest request)
+        public async Task<IActionResult> Update(int id,[FromForm] UpdateDistrictRequest request)
         {
-            var touristSpotId = await _manageDistrict.Update(request);
+            var touristSpotId = await _manageDistrict.Update(id,request);
             if (touristSpotId == 0)
             {
                 return BadRequest();

@@ -13,8 +13,8 @@ namespace server_travel.Dtos.touristSpot
         public string Location { get; set; } = null!;
 
         public string? Description { get; set; }
-        [DefaultValue(Status.Active)]
-        public Status Status { get; set; }
-        public IEnumerable<IFormFile> images { get; set; }
+       // [DefaultValue(Status.Active)]
+        //public Status Status { get; set; }
+        public IEnumerable<IFormFile>? images { get; set; }
     }
 }

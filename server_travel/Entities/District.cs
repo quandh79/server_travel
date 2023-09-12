@@ -7,7 +7,8 @@ namespace server_travel.Entities
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
+        public string? Location { get; set; }
+        public string? Description { get; set; }
         public virtual ICollection<Hotel> Hotels { get; set; } = new List<Hotel>();
 
         public virtual ICollection<Image> Images { get; set; } = new List<Image>();

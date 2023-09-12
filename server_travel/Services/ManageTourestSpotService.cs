@@ -6,6 +6,7 @@ using server_travel.Enums;
 using server_travel.Exceptions;
 using server_travel.Interfaces;
 using server_travel.Models;
+using server_travel.ViewModels;
 
 namespace server_travel.Services
 {
@@ -50,7 +51,7 @@ namespace server_travel.Services
                 DistrictId= spot.DistrictId,
                 Location = spot.Location,
                 Description = spot.Description,
-               // Status = Enums.Status.Active,
+                Status = Enums.Status.Active,
                 Images = spotImages,
             };
 
@@ -75,7 +76,7 @@ namespace server_travel.Services
 
         public async Task<List<TourestSpotViewModel>> GetAll()
         {
-            var data = _context.Touristspots.Include(img => img.Images).Where(x => x.Status == Status.Active)
+            var data = _context.Touristspots.Include(img => img.Images)
                  .Select(rs => new TourestSpotViewModel
                  {
                      Id = rs.Id,
@@ -102,9 +103,11 @@ namespace server_travel.Services
             var temp = spot;
 
             return temp;
-        }
 
-        public async Task<int> Update(SpotUpdateRequest spot)
+
+        }
+      
+            public async Task<int> Update(SpotUpdateRequest spot)
 
         {
           if(spot.images != null)
@@ -151,11 +154,8 @@ namespace server_travel.Services
                ).FirstOrDefaultAsync(p => p.id == spot.Id);
                 foreach (var image in findSpot.Image)
                 {
-                    if (spot.images.Contains(image.Id) == false)
-                    {
                         image.Status = Status.InActive;
                         _context.Entry(image).State = EntityState.Modified;
-                    }
                 }
                 if (spot.files != null)
                 {
@@ -167,6 +167,7 @@ namespace server_travel.Services
                         {
                             ImageUrl = url,
                             SpotId = spot.Id,
+                            Status = Status.Active,
 
                         };
                         tempImages.Add(img);
@@ -177,6 +178,7 @@ namespace server_travel.Services
             var touristSpot = new Touristspot()
             {
                 Id = spot.Id,
+                DistrictId = spot.DistrictId,
                 Name = spot.Name,
                 Location = spot.Location,
                 Description = spot.Description,

@@ -8,16 +8,14 @@ namespace server_travel.Dtos.Vehicle
     {
         public int Id { get; set; }
 
-        public int? SpotId { get; set; }
+        public int? TourId { get; set; }
 
         public string Name { get; set; } = null!;
 
         public string? Type { get; set; }
         public decimal? Price { get; set; }
-
-
         public string? Description { get; set; }
 
-        public Status Status { get; set; }
+       // public Status Status { get; set; }
     }
 }

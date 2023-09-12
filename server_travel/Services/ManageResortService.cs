@@ -70,7 +70,7 @@ namespace server_travel.Services
 
         public async Task<List<ResortViewModel>> GetAll()
         {
-            var data = _context.Resorts.Include(img => img.Images).Where(x => x.Status == Status.Active)
+            var data = _context.Resorts.Include(img => img.Images).Include(r => r.Room)
                  .Select(rs => new ResortViewModel
                  {
                      Id = rs.Id,
@@ -82,6 +82,8 @@ namespace server_travel.Services
                      ContactNumber = rs.ContactNumber,
                      Price = rs.Price,
                      Description = rs.Description,
+                     Room = rs.Room.Where(r => r.Status == Status.Active).ToList(),
+
                      Images = rs.Images.Where(i => i.Status == Status.Active).ToList(),
                      Status = rs.Status
                  });
@@ -90,7 +92,9 @@ namespace server_travel.Services
 
         public async Task<ResortViewModel> Get_By_Id(int id)
         {
-            var resort = await _context.Resorts.Include(img => img.Images).Select(s => new ResortViewModel()
+            var resort = await _context.Resorts.Include(img => img.Images)
+                .Include(r => r.Room)
+                .Select(s => new ResortViewModel()
             {
                 Id = s.Id,
                 SpotId = s.SpotId,
@@ -101,7 +105,9 @@ namespace server_travel.Services
                 ContactNumber = s.ContactNumber,
                 Price = s.Price,
                 Description = s.Description,
-                Images = s.Images.Where(i => i.Status == Status.Active).ToList(),
+                    Room = s.Room.Where(r => r.Status == Status.Active).ToList(),
+
+                    Images = s.Images.Where(i => i.Status == Status.Active).ToList(),
                 Status = s.Status
             }).FirstOrDefaultAsync(x => x.Id == id);
             var temp = resort;
@@ -138,7 +144,7 @@ namespace server_travel.Services
                         {
                             ImageUrl = url,
                             Status = Status.Active,
-                            SpotId = request.Id,
+                            ResortId = request.Id,
 
                         };
                         tempImages.Add(img);
@@ -156,11 +162,8 @@ namespace server_travel.Services
                ).FirstOrDefaultAsync(p => p.id == request.Id);
                 foreach (var image in findSpot.Image)
                 {
-                    if (request.images.Contains(image.Id) == false)
-                    {
                         image.Status = Status.InActive;
                         _context.Entry(image).State = EntityState.Modified;
-                    }
                 }
                 if (request.files != null)
                 {
@@ -171,7 +174,8 @@ namespace server_travel.Services
                         var img = new Image()
                         {
                             ImageUrl = url,
-                            SpotId = request.Id,
+                            ResortId = request.Id,
+                            Status = Status.Active,
 
                         };
                         tempImages.Add(img);
@@ -180,7 +184,7 @@ namespace server_travel.Services
                 }
             }
             var resort = new Resort()
-            {
+            {   Id  = request.Id,
                 SpotId = request.SpotId,
                 Name = request.Name,
                 Location = request.Location,

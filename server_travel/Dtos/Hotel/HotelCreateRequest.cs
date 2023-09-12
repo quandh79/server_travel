@@ -25,7 +25,7 @@ namespace server_travel.Dtos.Hotel
         public IEnumerable<IFormFile> images { get; set; }
 
         //public virtual Touristspot? Spot { get; set; }
-        [DefaultValue(Status.Active)]
-        public Status Status { get; set; }
+        //[DefaultValue(Status.Active)]
+        //public Status Status { get; set; }
     }
 }

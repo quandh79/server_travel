@@ -37,8 +37,11 @@ namespace server_travel.Services
             var tour = new Tour()
             {
                 SpotId = request.SpotId,
+                Name= request.Name,
                 TravelDate = request.TravelDate,
                 Duration = request.Duration,
+                TravelType = request.TravelType,
+                Person = request.Person,
                 Price = request.Price,
                 Description = request.Description,
                 Status = Enums.Status.Active,
@@ -66,16 +69,23 @@ namespace server_travel.Services
 
         public async Task<List<TourViewModel>> GetAll()
         {
-            var data = _context.Tours.Include(img => img.Images).Where(x => x.Status == Status.Active)
+            var data = _context.Tours.Include(img => img.Images)
+                .Include(t=>t.TravelPlans)
                  .Select(rs => new TourViewModel
                  {
                      Id = rs.Id,
                      SpotId = rs.SpotId,
+                     Name= rs.Name,
                      TravelDate = rs.TravelDate,
                      Duration = rs.Duration,
+                     Sale = rs.Sale,
                      Price = rs.Price,
+                     TravelType = rs.TravelType,
+                     Person = rs.Person,
                      Description = rs.Description,
                      Images = rs.Images.Where(i => i.Status == Status.Active).ToList(),
+                     TravelPlans = rs.TravelPlans.ToList(),
+                     Vehicles = rs.Vehicles.ToList(),
                      Status = rs.Status
                  });
             return await data.ToListAsync();
@@ -83,15 +93,23 @@ namespace server_travel.Services
 
         public async Task<TourViewModel> Get_By_Id(int id)
         {
-            var restaurant = await _context.Tours.Include(img => img.Images).Select(rs => new TourViewModel()
+            var restaurant = await _context.Tours.Include(img => img.Images)
+                .Include(t=>t.TravelPlans)
+                .Select(rs => new TourViewModel()
             {
                 Id = rs.Id,
                 SpotId = rs.SpotId,
+                Name=rs.Name,
                 TravelDate = rs.TravelDate,
                 Duration = rs.Duration,
+                Sale = rs.Sale,
                 Price = rs.Price,
+                TravelType = rs.TravelType,
+                Person = rs.Person,
                 Description = rs.Description,
                 Images = rs.Images.Where(i => i.Status == Status.Active).ToList(),
+                TravelPlans=rs.TravelPlans.ToList(),
+                Vehicles = rs.Vehicles.ToList(),
                 Status = rs.Status
             }).FirstOrDefaultAsync(x => x.Id == id);
             var temp = restaurant;
@@ -128,7 +146,7 @@ namespace server_travel.Services
                         {
                             ImageUrl = url,
                             Status = Status.Active,
-                            SpotId = request.Id,
+                            TourId = request.Id,
 
                         };
                         tempImages.Add(img);
@@ -146,11 +164,8 @@ namespace server_travel.Services
                ).FirstOrDefaultAsync(p => p.id == request.Id);
                 foreach (var image in findRestaurant.Image)
                 {
-                    if (request.images.Contains(image.Id) == false)
-                    {
                         image.Status = Status.InActive;
                         _context.Entry(image).State = EntityState.Modified;
-                    }
                 }
                 if (request.files != null)
                 {
@@ -161,7 +176,8 @@ namespace server_travel.Services
                         var img = new Image()
                         {
                             ImageUrl = url,
-                            SpotId = request.Id,
+                            TourId = request.Id,
+                            Status = Status.Active
 
                         };
                         tempImages.Add(img);
@@ -171,10 +187,14 @@ namespace server_travel.Services
             }
             var tour = new Tour()
             {
+                Id = request.Id,
                 SpotId = request.SpotId,
+                Name= request.Name,
                TravelDate = request.TravelDate,
                Duration = request.Duration,
-
+               TravelType = request.TravelType,
+               Person = request.Person,
+               Sale = request.Sale,
                 Price = request.Price,
                 Description = request.Description,
                 Status = Enums.Status.Active,

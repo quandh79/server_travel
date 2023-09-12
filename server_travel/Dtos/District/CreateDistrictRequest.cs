@@ -6,7 +6,8 @@ namespace server_travel.Dtos.District
     {
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
-        public Status Status { get; set; }
+        public string? Location { get; set; }
+
         public IEnumerable<IFormFile> images { get; set; }
     }
 }

@@ -11,20 +11,39 @@ namespace server_travel.Services
     public class ManageVehicle : IManageVehicle
     {
         private readonly TravelApiContext _context;
-        public ManageVehicle(TravelApiContext context)
+        private readonly IUpLoadService _uploadService;
+
+        public ManageVehicle(TravelApiContext context, IUpLoadService uploadService)
         {
             _context = context;
+            _uploadService = uploadService;
         }
         public async Task<int> Create(CreateVehicleRequest request)
         {
+            var spotImages = new List<Image>();
+            foreach (var image in request.images)
+            {
+                if (image == null || image.Length <= 0)
+                {
+                    throw new TravelException("Không tìm thấy hình ảnh.");
+                }
+                var imageUrl = await _uploadService.UploadImageAsync(image);
+                spotImages.Add(new Image
+                {
+                    ImageUrl = imageUrl,
+                    Status = Status.Active
+                });
+
+            }
             var vehicle = new Vehicle()
             {
-                SpotId = request.SpotId,
+                TourId = request.TourId,
                 Name = request.Name,
                 Type = request.Type,
                 Price = request.Price,
                 Description = request.Description,
-                Status = request.Status,
+                Images = spotImages,
+                Status = Status.Active
             };
             _context.Vehicles.Add(vehicle);
             await _context.SaveChangesAsync();
@@ -47,25 +66,47 @@ namespace server_travel.Services
         {
             var data = await _context.Vehicles.Select(rs => new VehicleViewModel()
             {
-                SpotId = rs.SpotId,
+                TourId = rs.TourId,
                 Name = rs.Name,
                 Type = rs.Type,
                 Price = rs.Price,
+                Images = rs.Images.Where(p => p.Status == Status.Active).ToList(),
                 Description = rs.Description,
                 Status = rs.Status,
 
             }).ToListAsync();
             return data;
         }
-        public async Task<VehicleViewModel> Get_By_Id(int id)
+
+        public async Task<List<VehicleViewModel>> GetByTourId(int id)
         {
-            var data = await _context.Vehicles.Where(v => v.Id == id).Select(rs => new VehicleViewModel()
+            var data = await _context.Vehicles.Where(v => v.TourId == id).Select(rs => new VehicleViewModel()
             {
-                SpotId = rs.SpotId,
+                Id = rs.Id,
+                TourId = rs.TourId,
                 Name = rs.Name,
                 Type = rs.Type,
                 Price = rs.Price,
                 Description = rs.Description,
+                Images = rs.Images.Where(p => p.Status == Status.Active).ToList(),
+                Status = rs.Status,
+            }).ToListAsync();
+
+                var temp = data;
+
+                return temp;
+        }
+
+        public async Task<VehicleViewModel> Get_By_Id(int id)
+        {
+            var data = await _context.Vehicles.Where(v => v.Id == id).Select(rs => new VehicleViewModel()
+            {
+                TourId = rs.TourId,
+                Name = rs.Name,
+                Type = rs.Type,
+                Price = rs.Price,
+                Description = rs.Description,
+                Images = rs.Images.Where(p => p.Status == Status.Active).ToList(),
                 Status = rs.Status,
             }).FirstOrDefaultAsync();
 
@@ -79,12 +120,12 @@ namespace server_travel.Services
             var vehicle = new Vehicle()
             {
                 Id = request.Id,
-                SpotId = request.SpotId,
+                TourId = request.TourId,
                 Name = request.Name,
                 Type = request.Type,
                 Price = request.Price,
                 Description = request.Description,
-                Status = request.Status,
+                Status = Status.Active,
 
             };
 

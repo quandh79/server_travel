@@ -9,8 +9,10 @@ namespace server_travel.Entities
         public int? HotelId { get; set; }
         public int? ResortId { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
-        public decimal Price { get; set; }
+        public string? Description { get; set; }
+        public int? Sale { get; set; }
+        public int? Price { get; set; }
+        public int? Slot { get; set; }
         public virtual ICollection<Image> Images { get; set; } = new List<Image>();
         public virtual Hotel? Hotel { get; set; }
         public virtual Resort? Resort { get; set; }

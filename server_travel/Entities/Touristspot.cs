@@ -28,7 +28,6 @@ public partial class Touristspot
 
     public virtual ICollection<Tour> Tours { get; set; } = new List<Tour>();
 
-    public virtual ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
     public virtual District? District { get; set; }
 
 }

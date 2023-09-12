@@ -3,6 +3,7 @@
     public enum Status
     {
         InActive,
-        Active
+        Active,
+        Gallery
     }
 }

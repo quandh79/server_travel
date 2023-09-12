@@ -9,6 +9,8 @@ namespace server_travel.ViewModels
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string? Location { get; set; }
+
         public virtual ICollection<Resort> Resorts { get; set; } = new List<Resort>();
         public virtual ICollection<Hotel> Hotels { get; set; } = new List<Hotel>();
         public virtual ICollection<Restaurant> Restaurants { get; set; } = new List<Restaurant>();

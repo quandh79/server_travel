@@ -49,6 +49,7 @@ namespace server_travel.Services
             {
                 Name = spot.Name,
                 Description = spot.Description,
+                Location = spot.Location,
                 Status = Enums.Status.Active,
                 Images = spotImages,
             };
@@ -75,33 +76,86 @@ namespace server_travel.Services
         public async Task<List<DistrictViewModel>> GetAll()
         {
             var data = _context.Districts.Include(img => img.Images).Where(x => x.Status == Status.Active)
+                .Include(t=>t.Touristspots).Where(x => x.Status == Status.Active)
+                .Include(h => h.Hotels).Where(x => x.Status == Status.Active)
+                .Include(r => r.Restaurants).Where(x => x.Status == Status.Active)
+                .Include(rs => rs.Resorts).Where(x => x.Status == Status.Active)
                  .Select(rs => new DistrictViewModel
                  {
                      Id = rs.Id,
                      Name = rs.Name,
+                     Location = rs.Location,
                      Description = rs.Description,
                      Images = rs.Images.Where(p => p.Status == Status.Active).ToList(),
+                     Touristspots= rs.Touristspots.Where(p => p.Status == Status.Active).ToList(),
+                     Hotels= rs.Hotels.Where(p => p.Status == Status.Active).ToList(),
+                     Resorts= rs.Resorts.Where(p => p.Status == Status.Active).ToList(),
+                     Restaurants= rs.Restaurants.Where(p => p.Status == Status.Active).ToList(),
                      Status = rs.Status,
                  });
             return await data.ToListAsync();
         }
 
+        public async Task<List<DistrictViewModel>> GetAllPaging(int? limit, int? page)
+        {
+            limit = limit != null ? limit : 10;
+            page = page != null ? page : 1;
+            int offset = (int)((page - 1) * limit);
+            var data = _context.Districts.Include(img => img.Images).Where(x => x.Status == Status.Active)
+                 .Include(t => t.Touristspots).Where(x => x.Status == Status.Active)
+                 .Include(h => h.Hotels).Where(x => x.Status == Status.Active)
+                 .Include(r => r.Restaurants).Where(x => x.Status == Status.Active)
+                 .Include(rs => rs.Resorts).Where(x => x.Status == Status.Active)
+                  .Select(rs => new DistrictViewModel
+                  {
+                      Id = rs.Id,
+                      Name = rs.Name,
+                      Location = rs.Location,
+                      Description = rs.Description,
+                      Images = rs.Images.Where(p => p.Status == Status.Active).ToList(),
+                      Touristspots = rs.Touristspots.Where(p => p.Status == Status.Active).ToList(),
+                      Hotels = rs.Hotels.Where(p => p.Status == Status.Active).ToList(),
+                      Resorts = rs.Resorts.Where(p => p.Status == Status.Active).ToList(),
+                      Restaurants = rs.Restaurants.Where(p => p.Status == Status.Active).ToList(),
+                      Status = rs.Status,
+                  });
+            return await data.Skip(offset).Take((int)limit).ToListAsync();
+        }
+
         public async Task<DistrictViewModel> Get_By_Id(int id)
         {
-            var spot = await _context.Districts.Include(img => img.Images).Select(s => new DistrictViewModel()
+            var spot = await _context.Districts.Include(img => img.Images).Where(x => x.Status == Status.Active)
+                .Include(t => t.Touristspots)
+                    .ThenInclude(ts => ts.Hotels.Where(h => h.Status == Status.Active)) // Include Hotels của TouristSpots có Status.Active
+                    .Include(t => t.Touristspots)
+                        .ThenInclude(ts => ts.Resorts.Where(r => r.Status == Status.Active)) // Include Resorts của TouristSpots có Status.Active
+                    .Include(t => t.Touristspots)
+                        .ThenInclude(ts => ts.Restaurants.Where(rr => rr.Status == Status.Active)) // Include Restaurants của TouristSpots có Status.Active
+                    .Include(t => t.Touristspots)
+                        .ThenInclude(ts => ts.Tours.Where(t => t.Status == Status.Active)) // Include Tours của TouristSpots có Status.Active
+                    .Where(x => x.Status == Status.Active)
+                .Include(h => h.Hotels)
+                .Include(r => r.Restaurants)
+                .Include(rs => rs.Resorts)
+                .Select(rs => new DistrictViewModel()
             {
-                Id = s.Id,
-                Name = s.Name,            
-                Description = s.Description,
-                Images = s.Images.Where(i => i.Status == Status.Active).ToList(),
-                Status = s.Status,
+                Id = rs.Id,
+                Name = rs.Name,
+                    Location = rs.Location,
+                    Description = rs.Description,
+                Images = rs.Images.Where(p => p.Status == Status.Active).ToList(),
+                Touristspots = rs.Touristspots.Where(p => p.Status == Status.Active).ToList(),
+                Hotels = rs.Hotels.Where(p => p.Status == Status.Active).ToList(),
+                Resorts = rs.Resorts.Where(p => p.Status == Status.Active).ToList(),
+                Restaurants = rs.Restaurants.Where(p => p.Status == Status.Active).ToList(),
+                Status = rs.Status,
             }).FirstOrDefaultAsync(x => x.Id == id);
             var temp = spot;
 
             return temp;
         }
 
-        public async Task<int> Update(UpdateDistrictRequest spot)
+        public async Task<int> Update(int id,UpdateDistrictRequest spot)
 
         {
             if (spot.images != null)
@@ -111,7 +165,7 @@ namespace server_travel.Services
                     id = se.Id,
                     Image = se.Images.Where(e => e.Status == Status.Active).ToList()
                 }
-                ).FirstOrDefaultAsync(p => p.id == spot.Id);
+                ).FirstOrDefaultAsync(p => p.id == id);
                 foreach (var image in findSpot.Image)
                 {
                     if (spot.images.Contains(image.Id) == false)
@@ -130,7 +184,7 @@ namespace server_travel.Services
                         {
                             ImageUrl = url,
                             Status = Status.Active,
-                            SpotId = spot.Id,
+                            DistrictId = findSpot.id,
 
                         };
                         tempImages.Add(img);
@@ -145,14 +199,14 @@ namespace server_travel.Services
                     id = se.Id,
                     Image = se.Images.Where(e => e.Status == Status.Active).ToList()
                 }
-               ).FirstOrDefaultAsync(p => p.id == spot.Id);
+               ).FirstOrDefaultAsync(p => p.id == id);
                 foreach (var image in findSpot.Image)
                 {
-                    if (spot.images.Contains(image.Id) == false)
-                    {
+                  
+                    
                         image.Status = Status.InActive;
                         _context.Entry(image).State = EntityState.Modified;
-                    }
+                    
                 }
                 if (spot.files != null)
                 {
@@ -163,7 +217,8 @@ namespace server_travel.Services
                         var img = new Image()
                         {
                             ImageUrl = url,
-                            SpotId = spot.Id,
+                            Status = Status.Active,
+                            DistrictId = findSpot.id,
 
                         };
                         tempImages.Add(img);
@@ -173,9 +228,10 @@ namespace server_travel.Services
             }
             var touristSpot = new District()
             {
-                Id = spot.Id,
+                Id = id,
                 Name = spot.Name,             
                 Description = spot.Description,
+                Location = spot.Location,
                 Images = null,
                 Status = Enums.Status.Active,
 
@@ -185,6 +241,70 @@ namespace server_travel.Services
             return touristSpot.Id;
 
 
+        }
+
+        public async Task<List<DistrictViewModel>> SearchByName(string name)
+        {
+            var data = _context.Districts.Include(img => img.Images)
+                .Include(t => t.Touristspots).ThenInclude(ts => ts.Images.Where(h => h.Status == Status.Active))
+                .Include(h => h.Hotels)
+                .Include(r => r.Restaurants)
+                .Include(rs => rs.Resorts)
+                .Where(x => x.Status == Status.Active && x.Name.Contains(name))
+                .Select(rs => new DistrictViewModel
+                {
+                    Id = rs.Id,
+                    Name = rs.Name,
+                    Location = rs.Location,
+                    Description = rs.Description,
+                    Images = rs.Images.Where(p => p.Status == Status.Active).ToList(),
+                    Touristspots = rs.Touristspots.Where(p => p.Status == Status.Active).ToList(),
+                    Hotels = rs.Hotels.Where(p => p.Status == Status.Active).ToList(),
+                    Resorts = rs.Resorts.Where(p => p.Status == Status.Active).ToList(),
+                    Restaurants = rs.Restaurants.Where(p => p.Status == Status.Active).ToList(),
+                    Status = rs.Status,
+                });
+
+            return await data.ToListAsync();
+        }
+
+        public async Task<List<object>> Search(string name)
+        {
+            var districtData = await _context.Districts.Include(i=>i.Images)
+                .Where(x => x.Status == Status.Active && x.Name.Contains(name))
+                .ToListAsync();
+
+            var touristSpotData = await _context.Touristspots.Include(i=>i.Images)
+                .Where(x => x.Status == Status.Active && x.Name.Contains(name))
+                .ToListAsync();
+
+            var results = new List<object>();
+
+            foreach (var district in districtData)
+            {
+                results.Add(new DistrictViewModel
+                {
+                    Id = district.Id,
+                    Name = district.Name,
+                    Description = district.Description,
+                    Images = district.Images.Where(i=>i.Status == Status.Active).ToList()
+                    
+                });
+            }
+
+            foreach (var touristSpot in touristSpotData)
+            {
+                results.Add(new TourestSpotViewModel
+                {
+                    Id = touristSpot.Id,
+                    Name = touristSpot.Name,
+                    Description = touristSpot.Description,
+                    Images = touristSpot.Images.Where(i=>i.Status == Status.Active).ToList()
+
+                });
+            }
+
+            return results;
         }
     }
 }

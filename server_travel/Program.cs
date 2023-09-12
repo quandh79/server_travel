@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using server_travel.Entities;
 using server_travel.Interfaces;
 using server_travel.Services;
+using server_travel.ViewModels;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -55,23 +56,30 @@ builder.Services.AddTransient<IManageRestaurant, ManageRestaurantService>();
 builder.Services.AddTransient<IManageTour, ManageTourService>();
 builder.Services.AddTransient<IManageVehicle, ManageVehicle>();
 builder.Services.AddTransient<IManageDistrict, ManageDistrict>();
-
+builder.Services.AddTransient<IManageRoom, ManageRoomService>();
+builder.Services.AddTransient<ITouristSpotService, TouristSpotService>();
+builder.Services.AddTransient<ITourService, TourService>();
+builder.Services.AddTransient<IHotelService, HotelService>();
+builder.Services.AddTransient<IResortService, ResortService>();
+builder.Services.AddTransient<IRestaurantService, RestaurantService>();
+builder.Services.AddTransient<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<IUpLoadService, UploadService>();
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
 app.MapControllers();
+   
 
 app.Run();

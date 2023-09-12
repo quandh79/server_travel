@@ -8,7 +8,7 @@ using server_travel.Entities;
 
 #nullable disable
 
-namespace travel_api.Migrations
+namespace server_travel.Migrations
 {
     [DbContext(typeof(TravelApiContext))]
     partial class TravelApiContextModelSnapshot : ModelSnapshot
@@ -31,7 +31,9 @@ namespace travel_api.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -183,6 +185,9 @@ namespace travel_api.Migrations
                     b.Property<int?>("TourId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("VehicleId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id")
                         .HasName("PK__images__3213E83F79A33295");
 
@@ -199,6 +204,8 @@ namespace travel_api.Migrations
                     b.HasIndex("SpotId");
 
                     b.HasIndex("TourId");
+
+                    b.HasIndex("VehicleId");
 
                     b.ToTable("images", (string)null);
                 });
@@ -338,7 +345,6 @@ namespace travel_api.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("HotelId")
@@ -348,10 +354,16 @@ namespace travel_api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int?>("Price")
+                        .HasColumnType("int");
 
                     b.Property<int?>("ResortId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Sale")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Slot")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
@@ -382,12 +394,22 @@ namespace travel_api.Migrations
                     b.Property<int?>("DistrictId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Duration")
-                        .HasColumnType("int")
+                    b.Property<string>("Duration")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("duration");
 
-                    b.Property<decimal?>("Price")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Person")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Sale")
+                        .HasColumnType("int");
 
                     b.Property<int?>("SpotId")
                         .HasColumnType("int")
@@ -399,6 +421,9 @@ namespace travel_api.Migrations
                     b.Property<DateTime?>("TravelDate")
                         .HasColumnType("date")
                         .HasColumnName("travelDate");
+
+                    b.Property<string>("TravelType")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id")
                         .HasName("PK__tours__3213E83FA2BEF46B");
@@ -447,6 +472,32 @@ namespace travel_api.Migrations
                     b.HasIndex("DistrictId");
 
                     b.ToTable("touristspots", (string)null);
+                });
+
+            modelBuilder.Entity("server_travel.Entities.TravelPlan", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TourId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("TourId");
+
+                    b.ToTable("TravelPlans");
                 });
 
             modelBuilder.Entity("server_travel.Entities.User", b =>
@@ -539,12 +590,12 @@ namespace travel_api.Migrations
                     b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("SpotId")
-                        .HasColumnType("int")
-                        .HasColumnName("spotId");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<int?>("TourId")
+                        .HasColumnType("int")
+                        .HasColumnName("tourId");
 
                     b.Property<string>("Type")
                         .HasMaxLength(250)
@@ -556,7 +607,7 @@ namespace travel_api.Migrations
 
                     b.HasIndex("DistrictId");
 
-                    b.HasIndex("SpotId");
+                    b.HasIndex("TourId");
 
                     b.ToTable("vehicles", (string)null);
                 });
@@ -611,6 +662,10 @@ namespace travel_api.Migrations
                         .WithMany("Images")
                         .HasForeignKey("TourId");
 
+                    b.HasOne("server_travel.Entities.Vehicle", "Vehicle")
+                        .WithMany("Images")
+                        .HasForeignKey("VehicleId");
+
                     b.Navigation("District");
 
                     b.Navigation("Hotel");
@@ -624,6 +679,8 @@ namespace travel_api.Migrations
                     b.Navigation("Spot");
 
                     b.Navigation("Tour");
+
+                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("server_travel.Entities.Resort", b =>
@@ -698,18 +755,27 @@ namespace travel_api.Migrations
                     b.Navigation("District");
                 });
 
+            modelBuilder.Entity("server_travel.Entities.TravelPlan", b =>
+                {
+                    b.HasOne("server_travel.Entities.Tour", "Tour")
+                        .WithMany("TravelPlans")
+                        .HasForeignKey("TourId");
+
+                    b.Navigation("Tour");
+                });
+
             modelBuilder.Entity("server_travel.Entities.Vehicle", b =>
                 {
                     b.HasOne("server_travel.Entities.District", null)
                         .WithMany("Vehicles")
                         .HasForeignKey("DistrictId");
 
-                    b.HasOne("server_travel.Entities.Touristspot", "Spot")
+                    b.HasOne("server_travel.Entities.Tour", "Tour")
                         .WithMany("Vehicles")
-                        .HasForeignKey("SpotId")
+                        .HasForeignKey("TourId")
                         .HasConstraintName("FK__vehicles__spotId__571DF1D5");
 
-                    b.Navigation("Spot");
+                    b.Navigation("Tour");
                 });
 
             modelBuilder.Entity("server_travel.Entities.District", b =>
@@ -756,6 +822,10 @@ namespace travel_api.Migrations
             modelBuilder.Entity("server_travel.Entities.Tour", b =>
                 {
                     b.Navigation("Images");
+
+                    b.Navigation("TravelPlans");
+
+                    b.Navigation("Vehicles");
                 });
 
             modelBuilder.Entity("server_travel.Entities.Touristspot", b =>
@@ -769,8 +839,11 @@ namespace travel_api.Migrations
                     b.Navigation("Restaurants");
 
                     b.Navigation("Tours");
+                });
 
-                    b.Navigation("Vehicles");
+            modelBuilder.Entity("server_travel.Entities.Vehicle", b =>
+                {
+                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }

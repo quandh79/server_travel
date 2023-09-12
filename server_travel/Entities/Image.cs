@@ -20,6 +20,7 @@ public partial class Image
     public int? RestaurantId { get; set; }
     public int? TourId { get; set; }
     public int? RoomId { get; set; }
+    public int? VehicleId { get; set; }
 
 
     public string ImageUrl { get; set; } = null!;
@@ -37,6 +38,9 @@ public partial class Image
 
 
     public virtual Touristspot? Spot { get; set; }
+    public virtual Vehicle? Vehicle { get; set; }
+
     [DefaultValue(Status.Active)]
     public Status Status { get; set; }
+
 }

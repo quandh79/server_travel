@@ -33,6 +33,13 @@ namespace server_travel.Controllers.admin
             return Ok(data);
         }
 
+         [HttpGet("GetByTourId/{id}")]
+        public async Task<IActionResult> GetByTourId(int id)
+        {
+            var data = await _manageVehicle.GetByTourId(id);
+            return Ok(data);
+        }
+
         // POST api/<ManageTouristSpotController>
         [HttpPost]
         public async Task<IActionResult> create([FromForm] CreateVehicleRequest request)

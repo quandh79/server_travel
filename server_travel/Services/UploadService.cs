@@ -1,6 +1,8 @@
-﻿using server_travel.Entities;
+using Microsoft.EntityFrameworkCore;
+using server_travel.Entities;
 using server_travel.Exceptions;
 using server_travel.Interfaces;
+using server_travel.Models;
 
 namespace server_travel.Services
 {
@@ -13,6 +15,18 @@ namespace server_travel.Services
             _httpContextAccessor = httpContextAccessor;
             _context = context;
         }
+
+        public async Task<List<ImageViewModel>> GetImageGallery()
+        {
+            var images =  _context.Images.Where(i=>i.Status == Enums.Status.Gallery).Select(rs=>new ImageViewModel
+            {
+                id = rs.Id,
+                urlImage = rs.ImageUrl,
+                status = rs.Status
+            });
+            return await images.ToListAsync();
+        }
+
         public async Task<string> UploadImageAsync(IFormFile image)
         {
             if (image == null || image.Length <= 0)
@@ -36,6 +50,24 @@ namespace server_travel.Services
             return imageUrl;
         }
 
-    
+        public async Task<Image> UploadImageGallery(IFormFile image)
+        {
+           
+                if (image == null || image.Length <= 0)
+                {
+                    throw new TravelException("Không tìm thấy hình ảnh.");
+                }
+                var imageUrl = await UploadImageAsync(image);
+            var Image = new Image
+            {
+                ImageUrl = imageUrl,
+                Status = Enums.Status.Gallery
+            };
+            _context.Images.Add(Image);
+            _context.SaveChanges();
+
+            return Image;
+
+        }
     }
 }

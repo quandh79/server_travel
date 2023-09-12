@@ -70,7 +70,7 @@ namespace server_travel.Services
 
         public async Task<List<RestaurantViewModel>> GetAll()
         {
-            var data = _context.Restaurants.Include(img => img.Images).Where(x => x.Status == Status.Active)
+            var data = _context.Restaurants.Include(img => img.Images)
                  .Select(rs => new RestaurantViewModel
                  {
                      Id = rs.Id,
@@ -138,7 +138,7 @@ namespace server_travel.Services
                         {
                             ImageUrl = url,
                             Status = Status.Active,
-                            SpotId = request.Id,
+                            RestaurantId = request.Id,
 
                         };
                         tempImages.Add(img);
@@ -156,11 +156,8 @@ namespace server_travel.Services
                ).FirstOrDefaultAsync(p => p.id == request.Id);
                 foreach (var image in findRestaurant.Image)
                 {
-                    if (request.images.Contains(image.Id) == false)
-                    {
                         image.Status = Status.InActive;
                         _context.Entry(image).State = EntityState.Modified;
-                    }
                 }
                 if (request.files != null)
                 {
@@ -171,7 +168,8 @@ namespace server_travel.Services
                         var img = new Image()
                         {
                             ImageUrl = url,
-                            SpotId = request.Id,
+                            RestaurantId = request.Id,
+                            Status = Status.Active
 
                         };
                         tempImages.Add(img);
@@ -180,7 +178,7 @@ namespace server_travel.Services
                 }
             }
             var restaurant = new Restaurant()
-            {
+            {   Id= request.Id,
                 SpotId = request.SpotId,
                 Name = request.Name,
                 Location = request.Location,

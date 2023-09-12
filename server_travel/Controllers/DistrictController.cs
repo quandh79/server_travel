@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using server_travel.Dtos.District;
 using server_travel.Entities;
+using server_travel.Interfaces;
 using server_travel.ViewModels;
 
 namespace server_travel.Controllers
@@ -10,21 +12,49 @@ namespace server_travel.Controllers
     [ApiController]
     public class DistrictController : ControllerBase
     {
-        private readonly TravelApiContext _context;
-        public DistrictController(TravelApiContext context)
+        private readonly IManageDistrict _manageDistrict;
+        public DistrictController(IManageDistrict manageDistrict)
         {
-            _context = context;
+            _manageDistrict = manageDistrict;
         }
+        // GET: api/<ManageTouristSpotController>
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<List<DistrictViewModel>> GetAll()
         {
-            var districts =  _context.Districts.Include(i=>i.Images).Where(i=>i.Status==Enums.Status.Active)
-                                              .Include(t=>t.Touristspots).Where(t => t.Status == Enums.Status.Active).ToArray();
-            if(districts == null)
-            {
-                return NotFound();
-            }
-            return Ok(districts);
+            var data = await _manageDistrict.GetAll();
+            return data;
         }
+
+        [HttpGet("paging")]
+        public async Task<List<DistrictViewModel>> GetAllPaging(int? limit, int? page)
+        {
+            var data = await _manageDistrict.GetAllPaging(limit,page);
+            return data;
+        }
+
+        // GET api/<ManageTouristSpotController>/5
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetSpotById(int id)
+        {
+            var spot = await _manageDistrict.Get_By_Id(id);
+            return Ok(spot);
+        }
+
+        [HttpGet("SearchByName/{name}")]
+        public async Task<List<DistrictViewModel>> SearchByName(string name)
+        {
+            var data = await _manageDistrict.SearchByName(name);
+            return data;
+        }
+
+        [HttpGet("Search/{name}")]
+        public async Task<List<object>> Search(string name)
+        {
+            var data = await _manageDistrict.Search(name);
+            return data;
+        }
+
+
+
     }
 }

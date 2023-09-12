@@ -21,11 +21,11 @@ namespace server_travel.Dtos.Resort
         public decimal? Price { get; set; }
         public string? Description { get; set; }
 
-        public IEnumerable<int> images { get; set; }
-        public IEnumerable<IFormFile> files { get; set; }
+        public IEnumerable<int>? images { get; set; }
+        public IEnumerable<IFormFile>? files { get; set; }
 
         //public virtual Touristspot? Spot { get; set; }
-        [DefaultValue(Status.Active)]
-        public Status Status { get; set; }
+        //[DefaultValue(Status.Active)]
+        //public Status Status { get; set; }
     }
 }

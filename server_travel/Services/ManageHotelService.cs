@@ -70,7 +70,8 @@ namespace server_travel.Services
 
         public async Task<List<HotelViewModel>> GetAll()
         {
-            var data = _context.Hotels.Include(img => img.Images).Where(x => x.Status == Status.Active)
+            var data = _context.Hotels.Include(img => img.Images)
+                .Include(r=>r.Room)
                  .Select(rs => new HotelViewModel
                  {
                      Id = rs.Id,
@@ -82,6 +83,7 @@ namespace server_travel.Services
                      ContactNumber = rs.ContactNumber,
                      Price = rs.Price,
                      Description = rs.Description,
+                     Room = rs.Room.Where(r=>r.Status == Status.Active).ToList(),
                      Images = rs.Images.Where(i => i.Status == Status.Active).ToList(),
                      Status = rs.Status
                  });
@@ -100,6 +102,7 @@ namespace server_travel.Services
                  Address = s.Address,
                  ContactNumber = s.ContactNumber,
                  Price = s.Price,
+                 Room = s.Room.Where(r => r.Status == Status.Active).ToList(),
                  Description = s.Description,                
                 Images = s.Images.Where(i=>i.Status == Status.Active).ToList(),
                 Status= s.Status
@@ -107,6 +110,11 @@ namespace server_travel.Services
             var temp = hotel;
 
             return temp;
+        }
+
+        public Task<List<HotelViewModel>> SearchByName(string name)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<int> Update(HotelUpdateRequest request)
@@ -138,7 +146,7 @@ namespace server_travel.Services
                         {
                             ImageUrl = url,
                             Status = Status.Active,
-                            SpotId = request.Id,
+                            HotelId = request.Id,
 
                         };
                         tempImages.Add(img);
@@ -148,19 +156,20 @@ namespace server_travel.Services
             }
             else
             {
-                var findSpot = await _context.Hotels.Include(img => img.Images).Select(se => new
+                var findSpot = await _context.Hotels
+                    
+                    .Include(img => img.Images).Select(se => new
                 {
                     id = se.Id,
                     Image = se.Images.Where(e => e.Status == Status.Active).ToList()
                 }
-               ).FirstOrDefaultAsync(p => p.id == request.Id);
+               ).FirstOrDefaultAsync(p => p.id == request.Id);               
                 foreach (var image in findSpot.Image)
                 {
-                    if (request.images.Contains(image.Id) == false)
-                    {
+                    
                         image.Status = Status.InActive;
                         _context.Entry(image).State = EntityState.Modified;
-                    }
+                    
                 }
                 if (request.files != null)
                 {
@@ -171,7 +180,8 @@ namespace server_travel.Services
                         var img = new Image()
                         {
                             ImageUrl = url,
-                            SpotId = request.Id,
+                            Status = Status.Active,
+                            HotelId = request.Id,
 
                         };
                         tempImages.Add(img);
@@ -181,6 +191,7 @@ namespace server_travel.Services
             }
             var hotel = new Hotel()
             {
+                Id= request.Id,
                 SpotId = request.SpotId,
                 Name = request.Name,
                 Location = request.Location,
